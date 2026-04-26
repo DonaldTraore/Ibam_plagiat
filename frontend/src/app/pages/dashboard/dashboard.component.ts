@@ -16,24 +16,24 @@ import { AuthService } from '../../services/auth.service';
           </mat-card-content>
         </mat-card>
 
-        <!-- Statistiques pour l'étudiant -->
+        <!-- Statistiques pour l'étudiant - Tout à 0 au départ -->
         <div *ngIf="user.role === 'ETUDIANT'" class="stats-grid">
           <mat-card class="stat-card">
             <mat-card-content>
-              <mat-icon class="stat-icon blue">description</mat-icon>
+              <mat-icon class="stat-icon blue">science</mat-icon>
               <div class="stat-info">
-                <h3>Mes Rapports</h3>
-                <p class="stat-number">3</p>
+                <h3>Tests Privés</h3>
+                <p class="stat-number">0</p>
               </div>
             </mat-card-content>
           </mat-card>
 
           <mat-card class="stat-card">
             <mat-card-content>
-              <mat-icon class="stat-icon green">check_circle</mat-icon>
+              <mat-icon class="stat-icon purple">topic</mat-icon>
               <div class="stat-info">
-                <h3>Validés</h3>
-                <p class="stat-number">1</p>
+                <h3>Thèmes Proposés</h3>
+                <p class="stat-number">0</p>
               </div>
             </mat-card-content>
           </mat-card>
@@ -43,30 +43,30 @@ import { AuthService } from '../../services/auth.service';
               <mat-icon class="stat-icon orange">pending</mat-icon>
               <div class="stat-info">
                 <h3>En Attente</h3>
-                <p class="stat-number">2</p>
+                <p class="stat-number">0</p>
               </div>
             </mat-card-content>
           </mat-card>
 
           <mat-card class="stat-card">
             <mat-card-content>
-              <mat-icon class="stat-icon red">warning</mat-icon>
+              <mat-icon class="stat-icon green">check_circle</mat-icon>
               <div class="stat-info">
-                <h3>Plagiat Détecté</h3>
+                <h3>Validés</h3>
                 <p class="stat-number">0</p>
               </div>
             </mat-card-content>
           </mat-card>
         </div>
 
-        <!-- Statistiques pour le Chef -->
+        <!-- Statistiques pour le Chef - à 0 au départ -->
         <div *ngIf="user.role === 'CHEF_DEPARTEMENT'" class="stats-grid">
           <mat-card class="stat-card">
             <mat-card-content>
               <mat-icon class="stat-icon blue">description</mat-icon>
               <div class="stat-info">
                 <h3>Rapports à Traiter</h3>
-                <p class="stat-number">12</p>
+                <p class="stat-number">0</p>
               </div>
             </mat-card-content>
           </mat-card>
@@ -75,8 +75,8 @@ import { AuthService } from '../../services/auth.service';
             <mat-card-content>
               <mat-icon class="stat-icon orange">topic</mat-icon>
               <div class="stat-info">
-                <h3>Thèmes à Valider</h3>
-                <p class="stat-number">5</p>
+                <h3>Thèmes à Traiter</h3>
+                <p class="stat-number">0</p>
               </div>
             </mat-card-content>
           </mat-card>
@@ -89,17 +89,40 @@ import { AuthService } from '../../services/auth.service';
           </mat-card-header>
           <mat-card-content>
             <div class="action-buttons">
-              <button mat-raised-button color="primary" routerLink="/reports/create" *ngIf="user.role === 'ETUDIANT'">
-                <mat-icon>add</mat-icon>
-                Nouveau Rapport
+              <!-- Actions ÉTUDIANT -->
+              <button mat-raised-button color="primary" routerLink="/reports/private-test" *ngIf="user.role === 'ETUDIANT'">
+                <mat-icon>science</mat-icon>
+                Test Privé
               </button>
-              <button mat-raised-button color="accent" routerLink="/themes/create" *ngIf="user.role === 'ETUDIANT'">
-                <mat-icon>add</mat-icon>
-                Nouveau Thème
+              <button mat-raised-button color="accent" routerLink="/themes/submit" *ngIf="user.role === 'ETUDIANT'">
+                <mat-icon>add_circle</mat-icon>
+                Proposer Thème
               </button>
-              <button mat-raised-button color="primary" routerLink="/reports" *ngIf="user.role === 'CHEF_DEPARTEMENT'">
+              <button mat-raised-button routerLink="/reports/my-submissions" *ngIf="user.role === 'ETUDIANT'">
+                <mat-icon>folder</mat-icon>
+                Mes Soumissions
+              </button>
+
+              <!-- Actions CHEF -->
+              <button mat-raised-button color="primary" routerLink="/reports/pending" *ngIf="user.role === 'CHEF_DEPARTEMENT'">
                 <mat-icon>visibility</mat-icon>
-                Voir les Rapports
+                Voir Rapports à Traiter
+              </button>
+              <button mat-raised-button color="accent" routerLink="/themes/pending" *ngIf="user.role === 'CHEF_DEPARTEMENT'">
+                <mat-icon>topic</mat-icon>
+                Voir Thèmes à Traiter
+              </button>
+
+              <!-- Actions DA -->
+              <button mat-raised-button color="primary" routerLink="/reports/final-validation" *ngIf="user.role === 'DA'">
+                <mat-icon>verified</mat-icon>
+                Validation Finale
+              </button>
+
+              <!-- Actions SECRÉTAIRE -->
+              <button mat-raised-button color="primary" routerLink="/documents/upload" *ngIf="user.role === 'SECRETAIRE'">
+                <mat-icon>upload_file</mat-icon>
+                Ajouter Document
               </button>
             </div>
           </mat-card-content>
@@ -148,6 +171,7 @@ import { AuthService } from '../../services/auth.service';
     .stat-icon.green { color: #4caf50; }
     .stat-icon.orange { color: #ff9800; }
     .stat-icon.red { color: #f44336; }
+    .stat-icon.purple { color: #9c27b0; }
     .stat-info h3 {
       margin: 0;
       font-size: 14px;

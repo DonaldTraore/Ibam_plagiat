@@ -16,7 +16,7 @@ import { AuthService } from '../../../services/auth.service';
 
       <div class="navbar-right" *ngIf="user$ | async as user">
         <button mat-icon-button [matMenuTriggerFor]="notificationsMenu">
-          <mat-icon [matBadge]="5" matBadgeColor="warn" matBadgeSize="small">notifications</mat-icon>
+          <mat-icon [matBadge]="0" matBadgeColor="warn" matBadgeSize="small" [matBadgeHidden]="true">notifications</mat-icon>
         </button>
         <mat-menu #notificationsMenu="matMenu">
           <div class="notification-menu">

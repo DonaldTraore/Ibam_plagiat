@@ -2,35 +2,113 @@ import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AuthService } from '../../../services/auth.service';
 
-interface MenuItem {
-  icon: string;
-  label: string;
-  route: string;
-  roles?: string[];
-}
-
 @Component({
   selector: 'app-sidebar',
   template: `
     <mat-list class="sidebar-menu" *ngIf="user$ | async as user">
-      <div class="menu-section">
-        <h3 mat-subheader>Principal</h3>
-        <a mat-list-item *ngFor="let item of getMenuItems(user.role)" 
-           [routerLink]="item.route" routerLinkActive="active-link">
-          <mat-icon mat-list-icon>{{ item.icon }}</mat-icon>
-          <span mat-line>{{ item.label }}</span>
-        </a>
-      </div>
+      <!-- MENU ÉTUDIANT -->
+      <ng-container *ngIf="user.role === 'ETUDIANT'">
+        <div class="menu-section">
+          <h3 mat-subheader>Principal</h3>
+          <a mat-list-item routerLink="/dashboard" routerLinkActive="active-link">
+            <mat-icon mat-list-icon>dashboard</mat-icon>
+            <span mat-line>Tableau de bord</span>
+          </a>
+        </div>
 
-      <mat-divider></mat-divider>
+        <mat-divider></mat-divider>
 
-      <div class="menu-section" *ngIf="user.role === 'ETUDIANT'">
-        <h3 mat-subheader>Mes Documents</h3>
-        <a mat-list-item routerLink="/reports/my-tests" routerLinkActive="active-link">
-          <mat-icon mat-list-icon>science</mat-icon>
-          <span mat-line>Tests privés</span>
-        </a>
-      </div>
+        <div class="menu-section">
+          <h3 mat-subheader>Mes Actions</h3>
+          <a mat-list-item routerLink="/reports/private-test" routerLinkActive="active-link">
+            <mat-icon mat-list-icon>science</mat-icon>
+            <span mat-line>Test Privé</span>
+          </a>
+          <a mat-list-item routerLink="/themes/submit" routerLinkActive="active-link">
+            <mat-icon mat-list-icon>add_circle</mat-icon>
+            <span mat-line>Proposer un Thème</span>
+          </a>
+          <a mat-list-item routerLink="/reports/my-submissions" routerLinkActive="active-link">
+            <mat-icon mat-list-icon>folder</mat-icon>
+            <span mat-line>Mes Soumissions</span>
+          </a>
+        </div>
+      </ng-container>
+
+      <!-- MENU CHEF DE DÉPARTEMENT -->
+      <ng-container *ngIf="user.role === 'CHEF_DEPARTEMENT'">
+        <div class="menu-section">
+          <h3 mat-subheader>Principal</h3>
+          <a mat-list-item routerLink="/dashboard" routerLinkActive="active-link">
+            <mat-icon mat-list-icon>dashboard</mat-icon>
+            <span mat-line>Tableau de bord</span>
+          </a>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="menu-section">
+          <h3 mat-subheader>À Traiter</h3>
+          <a mat-list-item routerLink="/reports/pending" routerLinkActive="active-link">
+            <mat-icon mat-list-icon>description</mat-icon>
+            <span mat-line>Rapports à Traiter</span>
+          </a>
+          <a mat-list-item routerLink="/themes/pending" routerLinkActive="active-link">
+            <mat-icon mat-list-icon>topic</mat-icon>
+            <span mat-line>Thèmes à Traiter</span>
+          </a>
+        </div>
+      </ng-container>
+
+      <!-- MENU DA -->
+      <ng-container *ngIf="user.role === 'DA'">
+        <div class="menu-section">
+          <h3 mat-subheader>Principal</h3>
+          <a mat-list-item routerLink="/dashboard" routerLinkActive="active-link">
+            <mat-icon mat-list-icon>dashboard</mat-icon>
+            <span mat-line>Tableau de bord</span>
+          </a>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="menu-section">
+          <h3 mat-subheader>Validation Finale</h3>
+          <a mat-list-item routerLink="/reports/final-validation" routerLinkActive="active-link">
+            <mat-icon mat-list-icon>verified</mat-icon>
+            <span mat-line>Validation Finale Rapports</span>
+          </a>
+          <a mat-list-item routerLink="/themes/final-validation" routerLinkActive="active-link">
+            <mat-icon mat-list-icon>gavel</mat-icon>
+            <span mat-line>Validation Finale Thèmes</span>
+          </a>
+        </div>
+      </ng-container>
+
+      <!-- MENU SECRÉTAIRE -->
+      <ng-container *ngIf="user.role === 'SECRETAIRE'">
+        <div class="menu-section">
+          <h3 mat-subheader>Principal</h3>
+          <a mat-list-item routerLink="/dashboard" routerLinkActive="active-link">
+            <mat-icon mat-list-icon>dashboard</mat-icon>
+            <span mat-line>Tableau de bord</span>
+          </a>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="menu-section">
+          <h3 mat-subheader>Gestion Documents</h3>
+          <a mat-list-item routerLink="/documents/upload" routerLinkActive="active-link">
+            <mat-icon mat-list-icon>upload_file</mat-icon>
+            <span mat-line>Ajouter Document</span>
+          </a>
+          <a mat-list-item routerLink="/documents" routerLinkActive="active-link">
+            <mat-icon mat-list-icon>folder</mat-icon>
+            <span mat-line>Documents</span>
+          </a>
+        </div>
+      </ng-container>
 
       <mat-divider></mat-divider>
 
@@ -43,16 +121,6 @@ interface MenuItem {
         <a mat-list-item routerLink="/notifications" routerLinkActive="active-link">
           <mat-icon mat-list-icon>notifications</mat-icon>
           <span mat-line>Notifications</span>
-        </a>
-      </div>
-
-      <mat-divider></mat-divider>
-
-      <div class="menu-section" *ngIf="isAdmin(user.role)">
-        <h3 mat-subheader>Administration</h3>
-        <a mat-list-item routerLink="/admin/users" routerLinkActive="active-link">
-          <mat-icon mat-list-icon>people</mat-icon>
-          <span mat-line>Utilisateurs</span>
         </a>
       </div>
     </mat-list>
@@ -89,24 +157,7 @@ interface MenuItem {
 export class SidebarComponent {
   user$: Observable<any>;
 
-  menuItems: MenuItem[] = [
-    { icon: 'dashboard', label: 'Tableau de bord', route: '/dashboard' },
-    { icon: 'description', label: 'Rapports', route: '/reports' },
-    { icon: 'topic', label: 'Thèmes', route: '/themes' },
-    { icon: 'folder', label: 'Documents', route: '/documents', roles: ['SECRETAIRE', 'CHEF_DEPARTEMENT', 'DA'] },
-  ];
-
   constructor(private authService: AuthService) {
     this.user$ = this.authService.currentUser$;
-  }
-
-  getMenuItems(userRole: string): MenuItem[] {
-    return this.menuItems.filter(item => 
-      !item.roles || item.roles.includes(userRole)
-    );
-  }
-
-  isAdmin(role: string): boolean {
-    return role === 'ADMIN' || role === 'DA';
   }
 }

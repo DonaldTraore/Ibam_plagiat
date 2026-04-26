@@ -25,7 +25,7 @@ const routes: Routes = [
     component: DashboardComponent,
     canActivate: [AuthGuard]
   },
-  // Reports
+  // Reports - Workflow Étudiant
   {
     path: 'reports',
     component: ReportListComponent,
@@ -38,6 +38,30 @@ const routes: Routes = [
     data: { roles: ['ETUDIANT'] }
   },
   {
+    path: 'reports/private-test',
+    component: ReportFormComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['ETUDIANT'] }
+  },
+  {
+    path: 'reports/my-submissions',
+    component: ReportListComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['ETUDIANT'] }
+  },
+  {
+    path: 'reports/pending',
+    component: ReportListComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['CHEF_DEPARTEMENT'] }
+  },
+  {
+    path: 'reports/final-validation',
+    component: ReportListComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['DA'] }
+  },
+  {
     path: 'reports/:id',
     component: ReportDetailComponent,
     canActivate: [AuthGuard]
@@ -48,7 +72,7 @@ const routes: Routes = [
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['ETUDIANT'] }
   },
-  // Themes
+  // Themes - Workflow
   {
     path: 'themes',
     component: ThemeListComponent,
@@ -61,6 +85,24 @@ const routes: Routes = [
     data: { roles: ['ETUDIANT'] }
   },
   {
+    path: 'themes/submit',
+    component: ThemeFormComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['ETUDIANT'] }
+  },
+  {
+    path: 'themes/pending',
+    component: ThemeListComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['CHEF_DEPARTEMENT'] }
+  },
+  {
+    path: 'themes/final-validation',
+    component: ThemeListComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['DA'] }
+  },
+  {
     path: 'themes/:id',
     component: ThemeDetailComponent,
     canActivate: [AuthGuard]
@@ -71,11 +113,17 @@ const routes: Routes = [
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['ETUDIANT'] }
   },
-  // Documents
+  // Documents - Secrétaire
   {
     path: 'documents',
     component: DocumentListComponent,
     canActivate: [AuthGuard]
+  },
+  {
+    path: 'documents/upload',
+    component: DocumentFormComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['SECRETAIRE'] }
   },
   {
     path: 'documents/create',
