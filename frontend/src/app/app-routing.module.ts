@@ -16,6 +16,8 @@ import { NotificationListComponent } from './pages/notifications/notification-li
 import { HistoryListComponent } from './pages/history/history-list/history-list.component';
 import { DocumentListComponent } from './pages/documents/document-list/document-list.component';
 import { DocumentFormComponent } from './pages/documents/document-form/document-form.component';
+import { PrivateTestComponent } from './pages/reports/private-test/private-test.component';
+import { ThemeSubmitComponent } from './pages/themes/theme-submit/theme-submit.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -39,7 +41,7 @@ const routes: Routes = [
   },
   {
     path: 'reports/private-test',
-    component: ReportFormComponent,
+    component: PrivateTestComponent,
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['ETUDIANT'] }
   },
@@ -86,7 +88,7 @@ const routes: Routes = [
   },
   {
     path: 'themes/submit',
-    component: ThemeFormComponent,
+    component: ThemeSubmitComponent,
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['ETUDIANT'] }
   },

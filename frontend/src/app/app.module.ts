@@ -32,6 +32,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 // Routing
 import { AppRoutingModule } from './app-routing.module';
@@ -56,6 +57,8 @@ import { DocumentFormComponent } from './pages/documents/document-form/document-
 import { PlagiarismResultComponent } from './components/reports/plagiarism-result/plagiarism-result.component';
 import { ConfirmDialogComponent } from './components/shared/confirm-dialog/confirm-dialog.component';
 import { LoadingComponent } from './components/shared/loading/loading.component';
+import { PrivateTestComponent } from './pages/reports/private-test/private-test.component';
+import { ThemeSubmitComponent } from './pages/themes/theme-submit/theme-submit.component';
 
 // Interceptors
 import { AuthInterceptor } from './interceptors/auth.interceptor';
@@ -84,7 +87,9 @@ import { NgChartsModule } from 'ng2-charts';
     DocumentFormComponent,
     PlagiarismResultComponent,
     ConfirmDialogComponent,
-    LoadingComponent
+    LoadingComponent,
+    PrivateTestComponent,
+    ThemeSubmitComponent
   ],
   imports: [
     BrowserModule,
@@ -121,7 +126,8 @@ import { NgChartsModule } from 'ng2-charts';
     MatDatepickerModule,
     MatNativeDateModule,
     MatGridListModule,
-    MatDividerModule
+    MatDividerModule,
+    MatCheckboxModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

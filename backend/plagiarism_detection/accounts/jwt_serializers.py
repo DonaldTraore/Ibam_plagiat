@@ -1,7 +1,7 @@
 """
 Serializers personnalisés pour SimpleJWT avec email au lieu de username
 """
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
 from rest_framework import exceptions
@@ -9,14 +9,12 @@ from rest_framework import exceptions
 User = get_user_model()
 
 
-class EmailTokenObtainPairSerializer(TokenObtainPairSerializer):
+class EmailTokenObtainPairSerializer(serializers.Serializer):
     """
     Serializer qui accepte email et password au lieu de username
     """
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Changer le champ username en email dans le serializer
-        self.fields['email'] = self.fields.pop('username')
+    email = serializers.EmailField(required=True)
+    password = serializers.CharField(required=True, write_only=True)
 
     def validate(self, attrs):
         # Récupérer l'email et le mot de passe
