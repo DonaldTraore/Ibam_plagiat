@@ -47,16 +47,12 @@ import { environment } from '../../../../environments/environment';
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Département</mat-label>
               <mat-select formControlName="departement">
-                <mat-option value="INFORMATIQUE">Informatique</mat-option>
-                <mat-option value="MATHEMATIQUES">Mathématiques</mat-option>
-                <mat-option value="PHYSIQUE">Physique</mat-option>
-                <mat-option value="CHIMIE">Chimie</mat-option>
-                <mat-option value="BIOLOGIE">Biologie</mat-option>
-                <mat-option value="ECONOMIE">Économie</mat-option>
-                <mat-option value="GESTION">Gestion</mat-option>
-                <mat-option value="DROIT">Droit</mat-option>
-                <mat-option value="MEDECINE">Médecine</mat-option>
-                <mat-option value="AUTRE">Autre</mat-option>
+                <mat-option value="MIAGE">MIAGE</mat-option>
+                <mat-option value="ABF">ABF</mat-option>
+                <mat-option value="CCA">CCA</mat-option>
+                <mat-option value="MID">MID</mat-option>
+                <mat-option value="ADB">ADB</mat-option>
+                <mat-option value="ADC">ADC</mat-option>
               </mat-select>
             </mat-form-field>
 
@@ -218,7 +214,7 @@ export class ThemeSubmitComponent {
     this.form = this.fb.group({
       titre: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(300)]],
       description: ['', [Validators.required, Validators.minLength(50)]],
-      departement: ['INFORMATIQUE', Validators.required]
+      departement: ['MIAGE', Validators.required]
     });
   }
 

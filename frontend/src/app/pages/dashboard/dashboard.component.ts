@@ -16,49 +16,6 @@ import { AuthService } from '../../services/auth.service';
           </mat-card-content>
         </mat-card>
 
-        <!-- Statistiques pour l'étudiant - Tout à 0 au départ -->
-        <div *ngIf="user.role === 'ETUDIANT'" class="stats-grid">
-          <mat-card class="stat-card">
-            <mat-card-content>
-              <mat-icon class="stat-icon blue">science</mat-icon>
-              <div class="stat-info">
-                <h3>Tests Privés</h3>
-                <p class="stat-number">0</p>
-              </div>
-            </mat-card-content>
-          </mat-card>
-
-          <mat-card class="stat-card">
-            <mat-card-content>
-              <mat-icon class="stat-icon purple">topic</mat-icon>
-              <div class="stat-info">
-                <h3>Thèmes Proposés</h3>
-                <p class="stat-number">0</p>
-              </div>
-            </mat-card-content>
-          </mat-card>
-
-          <mat-card class="stat-card">
-            <mat-card-content>
-              <mat-icon class="stat-icon orange">pending</mat-icon>
-              <div class="stat-info">
-                <h3>En Attente</h3>
-                <p class="stat-number">0</p>
-              </div>
-            </mat-card-content>
-          </mat-card>
-
-          <mat-card class="stat-card">
-            <mat-card-content>
-              <mat-icon class="stat-icon green">check_circle</mat-icon>
-              <div class="stat-info">
-                <h3>Validés</h3>
-                <p class="stat-number">0</p>
-              </div>
-            </mat-card-content>
-          </mat-card>
-        </div>
-
         <!-- Statistiques pour le Chef - à 0 au départ -->
         <div *ngIf="user.role === 'CHEF_DEPARTEMENT'" class="stats-grid">
           <mat-card class="stat-card">
@@ -97,10 +54,6 @@ import { AuthService } from '../../services/auth.service';
               <button mat-raised-button color="accent" routerLink="/themes/submit" *ngIf="user.role === 'ETUDIANT'">
                 <mat-icon>add_circle</mat-icon>
                 Proposer Thème
-              </button>
-              <button mat-raised-button routerLink="/reports/my-submissions" *ngIf="user.role === 'ETUDIANT'">
-                <mat-icon>folder</mat-icon>
-                Mes Soumissions
               </button>
 
               <!-- Actions CHEF -->

@@ -28,10 +28,6 @@ import { AuthService } from '../../../services/auth.service';
             <mat-icon mat-list-icon>add_circle</mat-icon>
             <span mat-line>Proposer un Thème</span>
           </a>
-          <a mat-list-item routerLink="/reports/my-submissions" routerLinkActive="active-link">
-            <mat-icon mat-list-icon>folder</mat-icon>
-            <span mat-line>Mes Soumissions</span>
-          </a>
         </div>
       </ng-container>
 
