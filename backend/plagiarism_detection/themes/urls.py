@@ -6,6 +6,9 @@ urlpatterns = [
     path('', views.ThemeListView.as_view(), name='theme-list'),
     path('create/', views.ThemeCreateView.as_view(), name='theme-create'),
     
+    # Vérification similarité avant création
+    path('check-similarity/', views.ThemeCheckSimilarityView.as_view(), name='theme-check-similarity'),
+    
     # Détail, mise à jour, suppression
     path('<int:pk>/', views.ThemeDetailView.as_view(), name='theme-detail'),
     path('<int:pk>/update/', views.ThemeUpdateView.as_view(), name='theme-update'),

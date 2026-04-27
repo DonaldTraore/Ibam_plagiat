@@ -48,10 +48,11 @@ class ThemeCreateSerializer(serializers.ModelSerializer):
     Sérialiseur pour la création d'un thème.
     """
     fichier = serializers.FileField(required=False)
+    departement = serializers.CharField(required=False, write_only=True)
     
     class Meta:
         model = Theme
-        fields = ['id', 'titre', 'description', 'mots_cles', 'fichier', 'est_test_prive']
+        fields = ['id', 'titre', 'description', 'mots_cles', 'fichier', 'est_test_prive', 'departement']
         read_only_fields = ['id']
     
     def validate_fichier(self, value):

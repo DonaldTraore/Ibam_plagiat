@@ -13,6 +13,7 @@ from .serializers import (
 )
 from ..utils.plagiarism_detector import PlagiarismDetector
 from ..notifications.models import Notification
+from ..history.models import History
 
 
 class ReportListView(generics.ListAPIView):
@@ -96,6 +97,16 @@ class ReportCreateView(generics.CreateAPIView):
             departement=user.departement
         )
         
+        # Créer une entrée dans l'historique
+        History.objects.create(
+            user=user,
+            action=History.Action.CREATION,
+            entity_type=History.EntityType.REPORT,
+            entity_id=report.id,
+            details=f"Rapport créé: {report.titre}",
+            departement=user.departement
+        )
+        
         return report
 
 
@@ -159,8 +170,23 @@ class ReportSubmitView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
         
+        # Si c'était un test privé, le convertir en rapport normal
+        if report.est_test_prive:
+            report.est_test_prive = False
+            report.save()
+        
         # Soumettre le rapport
         report.soumettre()
+        
+        # Créer une entrée dans l'historique
+        History.objects.create(
+            user=request.user,
+            action=History.Action.SOUMISSION,
+            entity_type=History.EntityType.REPORT,
+            entity_id=report.id,
+            details=f"Rapport soumis: {report.titre}",
+            departement=report.departement
+        )
         
         # Notifier le chef de département
         from django.contrib.auth import get_user_model
@@ -355,6 +381,16 @@ class ReportTestPlagiarismView(APIView):
         report.score_plagiat_global = result.score_global
         report.est_plagiat = result.depasse_seuil
         report.save()
+        
+        # Créer une entrée dans l'historique
+        History.objects.create(
+            user=user,
+            action=History.Action.TEST_PLAGIAT,
+            entity_type=History.EntityType.REPORT,
+            entity_id=report.id,
+            details=f"Test plagiat: {report.titre} - Score: {result.score_global}%",
+            departement=report.departement
+        )
         
         # Sérialiser et retourner le résultat
         result_serializer = PlagiarismResultSerializer(result)

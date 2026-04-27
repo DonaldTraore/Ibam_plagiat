@@ -11,6 +11,7 @@ from .serializers import (
     ThemeSubmitSerializer
 )
 from ..notifications.models import Notification
+from ..history.models import History
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -76,15 +77,65 @@ class ThemeCreateView(generics.CreateAPIView):
     queryset = Theme.objects.all()
     serializer_class = ThemeCreateSerializer
     permission_classes = [permissions.IsAuthenticated]
-    parser_classes = [MultiPartParser, FormParser]
     
     def perform_create(self, serializer):
         user = self.request.user
+        # Utiliser le departement du formulaire s'il est fourni, sinon celui de l'utilisateur
+        departement = serializer.validated_data.get('departement', user.departement)
         theme = serializer.save(
             etudiant=user,
-            departement=user.departement
+            departement=departement
         )
+        
+        # Créer une entrée dans l'historique
+        History.objects.create(
+            user=user,
+            action=History.Action.CREATION,
+            entity_type=History.EntityType.THEME,
+            entity_id=theme.id,
+            details=f"Thème créé: {theme.titre}",
+            departement=departement
+        )
+        
         return theme
+    
+    def create(self, request, *args, **kwargs):
+        """Créer et optionnellement soumettre le thème."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        theme = self.perform_create(serializer)
+        
+        # Si soumission demandée, soumettre le thème
+        if request.data.get('soumettre'):
+            if theme.statut in ['BROUILLON', 'REJETE_CHEF']:
+                theme.soumettre()
+                
+                # Notifier les chefs
+                chefs = User.objects.filter(
+                    role='CHEF_DEPARTEMENT',
+                    departement=theme.departement
+                )
+                for chef in chefs:
+                    Notification.objects.create(
+                        user=chef,
+                        type='NOUVEAU_THEME',
+                        titre='Nouveau thème soumis',
+                        message=f"{request.user.get_full_name()} a soumis un nouveau thème: {theme.titre}",
+                        lien=f'/themes/{theme.id}'
+                    )
+                
+                # Ajouter à l'historique
+                History.objects.create(
+                    user=request.user,
+                    action=History.Action.SOUMISSION,
+                    entity_type=History.EntityType.THEME,
+                    entity_id=theme.id,
+                    details=f"Thème soumis: {theme.titre}",
+                    departement=theme.departement
+                )
+        
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class ThemeUpdateView(generics.UpdateAPIView):
@@ -288,6 +339,51 @@ class ThemeValidateView(APIView):
             )
         
         return Response({"message": message}, status=status.HTTP_200_OK)
+
+
+class ThemeCheckSimilarityView(APIView):
+    """
+    Vérifier la similarité d'un thème avant création (sans sauvegarder).
+    """
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def post(self, request):
+        titre = request.data.get('titre', '')
+        description = request.data.get('description', '')
+        
+        if not titre:
+            return Response(
+                {"error": "Le titre est requis."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Rechercher les thèmes similaires par titre
+        from ..utils.theme_similarity import ThemeSimilarityChecker
+        from .models import Theme
+        
+        checker = ThemeSimilarityChecker()
+        
+        # Chercher les thèmes existants similaires
+        similar_themes = []
+        existing_themes = Theme.objects.filter(est_test_prive=False)
+        
+        for theme in existing_themes:
+            score = checker.calculate_text_similarity(titre, theme.titre)
+            if score > 30:  # Seulement si similarité > 30%
+                similar_themes.append({
+                    'id': theme.id,
+                    'titre': theme.titre,
+                    'similarity': round(score, 1)
+                })
+        
+        # Trier par similarité décroissante
+        similar_themes.sort(key=lambda x: x['similarity'], reverse=True)
+        
+        return Response({
+            'has_similar_themes': len(similar_themes) > 0,
+            'similar_themes': similar_themes[:5],  # Max 5 résultats
+            'score_global': round(checker.calculate_text_similarity(titre, description), 1) if description else 0
+        }, status=status.HTTP_200_OK)
 
 
 class ThemeTestSimilarityView(APIView):

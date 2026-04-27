@@ -153,34 +153,58 @@ export class HistoryListComponent implements OnInit {
     this.loading = true;
 
     // Appel API pour récupérer l'historique
-    this.http.get<HistoryItem[]>(`${this.apiUrl}/history/my-history/`).subscribe({
+    this.http.get<any[]>(`${this.apiUrl}/history/my-history/`).subscribe({
       next: (items) => {
-        this.historyItems = items;
+        // Mapper les données du backend vers le format du frontend
+        this.historyItems = items.map(item => this.mapHistoryItem(item));
         this.loading = false;
       },
       error: () => {
         this.loading = false;
-        // Données de test si l'API n'est pas prête
-        this.historyItems = [
-          {
-            id: 1,
-            type: 'TEST_PRIVE',
-            titre: 'Test plagiat - Mémoire Finance',
-            date: new Date().toISOString(),
-            statut: 'Test Privé',
-            details: 'Score de plagiat: 12% - Le document est original'
-          },
-          {
-            id: 2,
-            type: 'THEME_SOUMIS',
-            titre: 'Détection de plagiat par intelligence artificielle',
-            date: new Date(Date.now() - 86400000).toISOString(),
-            statut: 'Soumis',
-            details: 'En attente de validation par le Chef de Département'
-          }
-        ];
+        this.historyItems = [];  // Historique vide si erreur
       }
     });
+  }
+
+  private mapHistoryItem(item: any): HistoryItem {
+    // Déterminer le type
+    let type: 'TEST_PRIVE' | 'THEME_SOUMIS' | 'RAPPORT_SOUMIS';
+    if (item.entity_type === 'THEME') {
+      type = 'THEME_SOUMIS';
+    } else if (item.entity_type === 'REPORT') {
+      type = 'RAPPORT_SOUMIS';
+    } else if (item.action === 'TEST_PLAGIAT') {
+      type = 'TEST_PRIVE';
+    } else {
+      type = 'THEME_SOUMIS';
+    }
+
+    // Extraire le titre depuis details
+    let titre = item.details || 'Sans titre';
+    if (titre.includes(':')) {
+      titre = titre.split(':')[1]?.trim() || titre;
+    }
+
+    // Déterminer le statut
+    let statut = 'Soumis';
+    if (item.action === 'TEST_PLAGIAT') {
+      statut = 'Test Privé';
+    } else if (item.action === 'CREATION') {
+      statut = 'Créé';
+    } else if (item.action === 'VALIDATION') {
+      statut = 'Validé';
+    } else if (item.action === 'REJET') {
+      statut = 'Rejeté';
+    }
+
+    return {
+      id: item.id,
+      type: type,
+      titre: titre,
+      date: item.created_at,
+      statut: statut,
+      details: item.details
+    };
   }
 
   getIcon(type: string): string {

@@ -17,6 +17,12 @@ class User(AbstractBaseUser, PermissionsMixin):
         ADMIN = 'ADMIN', _('Administrateur')
     
     class Departement(models.TextChoices):
+        MIAGE = 'MIAGE', _('Méthodes Informatiques Appliquées à la Gestion des Entreprises')
+        ABF = 'ABF', _('Analyse et Pilotage Budgetaire et Financiere')
+        CCA = 'CCA', _('Comptabilite Controle Audit')
+        MID = 'MID', _('Management et Innovation Digitale')
+        ADB = 'ADB', _('Assurance et Actuariat de Base')
+        ADC = 'ADC', _('Audit et Controle de Gestion')
         INFORMATIQUE = 'INFORMATIQUE', _('Informatique')
         MATHEMATIQUES = 'MATHEMATIQUES', _('Mathématiques')
         PHYSIQUE = 'PHYSIQUE', _('Physique')

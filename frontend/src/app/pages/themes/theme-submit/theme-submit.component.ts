@@ -253,14 +253,20 @@ export class ThemeSubmitComponent {
   confirmSubmit(): void {
     this.loading = true;
 
-    this.http.post(`${this.apiUrl}/themes/`, this.form.value).subscribe({
+    const data = {
+      ...this.form.value,
+      soumettre: true  // Soumettre directement le thème
+    };
+
+    this.http.post(`${this.apiUrl}/themes/create/`, data).subscribe({
       next: () => {
         this.loading = false;
         this.snackBar.open('Thème soumis avec succès !', 'Fermer', { duration: 3000 });
-        this.router.navigate(['/themes']);
+        this.router.navigate(['/dashboard']);
       },
-      error: () => {
+      error: (err) => {
         this.loading = false;
+        console.error('Erreur:', err);
         this.snackBar.open('Erreur lors de la soumission du thème', 'Fermer', { duration: 3000 });
       }
     });

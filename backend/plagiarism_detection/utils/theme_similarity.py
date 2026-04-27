@@ -84,6 +84,12 @@ class ThemeSimilarityChecker:
         
         return 0.0
     
+    def calculate_text_similarity(self, text1: str, text2: str) -> float:
+        """
+        Calcule la similarité entre deux textes (méthode publique).
+        """
+        return self._text_similarity(text1, text2)
+    
     def _text_similarity(self, text1: str, text2: str) -> float:
         """
         Calcule la similarité entre deux textes.
