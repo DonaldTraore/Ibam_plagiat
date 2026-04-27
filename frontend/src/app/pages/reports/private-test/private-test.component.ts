@@ -392,7 +392,7 @@ export class PrivateTestComponent {
       this.reportService.submitReport(this.createdReportId).subscribe({
         next: () => {
           this.snackBar.open('Rapport soumis avec succès !', 'Fermer', { duration: 3000 });
-          this.router.navigate(['/reports/my-submissions']);
+          this.router.navigate(['/dashboard']);
         },
         error: () => {
           this.snackBar.open('Erreur lors de la soumission', 'Fermer', { duration: 3000 });

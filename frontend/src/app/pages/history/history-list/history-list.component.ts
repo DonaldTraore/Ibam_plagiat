@@ -159,9 +159,10 @@ export class HistoryListComponent implements OnInit {
         this.historyItems = items.map(item => this.mapHistoryItem(item));
         this.loading = false;
       },
-      error: () => {
+      error: (err) => {
         this.loading = false;
         this.historyItems = [];  // Historique vide si erreur
+        console.error('Erreur historique:', err);
       }
     });
   }
