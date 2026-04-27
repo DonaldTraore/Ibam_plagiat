@@ -137,6 +137,7 @@ interface HistoryItem {
 export class HistoryListComponent implements OnInit {
   historyItems: HistoryItem[] = [];
   loading = true;
+  private isLoading = false;  // Protection contre les appels répétés
 
   private apiUrl = environment.apiUrl;
 
@@ -150,19 +151,27 @@ export class HistoryListComponent implements OnInit {
   }
 
   loadHistory(): void {
+    if (this.isLoading) return;  // Empêcher les appels répétés
+    
+    this.isLoading = true;
     this.loading = true;
 
     // Appel API pour récupérer l'historique
     this.http.get<any[]>(`${this.apiUrl}/history/my-history/`).subscribe({
       next: (items) => {
-        // Mapper les données du backend vers le format du frontend
-        this.historyItems = items.map(item => this.mapHistoryItem(item));
+        try {
+          // Mapper les données du backend vers le format du frontend
+          this.historyItems = items.map(item => this.mapHistoryItem(item));
+        } catch (e) {
+          this.historyItems = [];
+        }
         this.loading = false;
+        this.isLoading = false;
       },
       error: (err) => {
         this.loading = false;
+        this.isLoading = false;
         this.historyItems = [];  // Historique vide si erreur
-        console.error('Erreur historique:', err);
       }
     });
   }

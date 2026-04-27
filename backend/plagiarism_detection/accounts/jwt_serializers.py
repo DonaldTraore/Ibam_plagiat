@@ -1,5 +1,5 @@
 """
-Serializers personnalisés pour SimpleJWT avec email au lieu de username
+Serializers pour JWT avec email
 """
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -10,24 +10,15 @@ User = get_user_model()
 
 
 class EmailTokenObtainPairSerializer(serializers.Serializer):
-    """
-    Serializer qui accepte email et password au lieu de username
-    """
+    """Serializer qui accepte email/password et génère des tokens JWT valides"""
     email = serializers.EmailField(required=True)
     password = serializers.CharField(required=True, write_only=True)
 
     def validate(self, attrs):
-        # Récupérer l'email et le mot de passe
         email = attrs.get('email')
         password = attrs.get('password')
 
-        if not email or not password:
-            raise exceptions.AuthenticationFailed(
-                'Email et mot de passe requis',
-                code='authentication_failed'
-            )
-
-        # Chercher l'utilisateur par email et vérifier le mot de passe
+        # Chercher l'utilisateur par email
         try:
             user = User.objects.get(email=email)
         except User.DoesNotExist:
@@ -36,6 +27,7 @@ class EmailTokenObtainPairSerializer(serializers.Serializer):
                 code='authentication_failed'
             )
 
+        # Vérifier le mot de passe
         if not user.check_password(password):
             raise exceptions.AuthenticationFailed(
                 'Email ou mot de passe incorrect',
@@ -48,11 +40,10 @@ class EmailTokenObtainPairSerializer(serializers.Serializer):
                 code='user_inactive'
             )
 
-        # Créer les tokens manuellement
+        # Créer les tokens
         refresh = RefreshToken.for_user(user)
-        data = {
+
+        return {
             'refresh': str(refresh),
             'access': str(refresh.access_token),
         }
-
-        return data
